@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Product } from './types.ts'
+import type { Condition, Product, Source } from './types.ts'
 
 const axiosInstance = axios.create({ baseURL: process.env.API || '' })
 
@@ -59,8 +59,8 @@ export async function search({
   condition,
 }: {
   q: string
-  source: 'search' | 'universe'
-  condition?: '1' | '2' | '1%232'
+  source: Source
+  condition?: Condition
 }): Promise<Product[]> {
   const { data } = await axiosInstance.post<SearchProductV5Response>(
     '',

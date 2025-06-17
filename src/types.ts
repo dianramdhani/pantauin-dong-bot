@@ -6,3 +6,7 @@ export type Product = {
   shopName: string
   shopCity: string
 }
+
+export type Source = 'search' | 'universe'
+
+export type Condition = '1' | '2' | '1%232'

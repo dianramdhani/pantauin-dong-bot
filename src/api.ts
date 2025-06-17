@@ -1,8 +1,14 @@
 import axios from 'axios'
-import type { Product } from './types.ts'
+import type { Condition, Product, Source } from './types'
 
+/**
+ * Axios instance dengan baseURL dari environment variable `API`.
+ */
 const axiosInstance = axios.create({ baseURL: process.env.API || '' })
 
+/**
+ * Tipe untuk response dari API SearchProductV5 (GraphQL).
+ */
 type SearchProductV5Response = {
   data: {
     searchProductV5: {
@@ -27,7 +33,7 @@ type SearchProductV5Product = {
   price: SearchProductV5Price
   shop: SearchProductV5Shop
   rating: string
-  labelGroups: any[] // Gantilah dengan tipe spesifik jika kamu tahu isi labelGroups
+  labelGroups: any[] // Gunakan tipe lebih spesifik jika kamu tahu struktur sebenarnya
   __typename: 'searchProductV5Product'
 }
 
@@ -53,14 +59,22 @@ type SearchProductV5Shop = {
   __typename: 'SearchProductV5Shop'
 }
 
+/**
+ * Melakukan pencarian produk berdasarkan kata kunci, sumber, dan kondisi produk.
+ *
+ * @param q - Kata kunci pencarian (contoh: "vivo v50")
+ * @param source - Sumber pencarian (misalnya "search" untuk semua, atau "universe" untuk lebih detail)
+ * @param condition - Kondisi produk (opsional: "1" untuk baru, "2" untuk bekas)
+ * @returns Array berisi produk hasil pencarian yang telah dipetakan ke bentuk standar `Product`
+ */
 export async function search({
   q,
   source,
   condition,
 }: {
   q: string
-  source: 'search' | 'universe'
-  condition?: '1' | '2' | '1%232'
+  source: Source
+  condition?: Condition
 }): Promise<Product[]> {
   const { data } = await axiosInstance.post<SearchProductV5Response>(
     '',
@@ -81,6 +95,7 @@ export async function search({
       },
     }
   )
+
   return data.data.searchProductV5.data.products.map((product) => ({
     name: product.name,
     url: product.url,
